@@ -10,6 +10,7 @@ const KYC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
     dateOfBirth: "",
     phoneNumber: "",
     otp: "",
@@ -61,6 +62,18 @@ const KYC = () => {
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email address"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
                 required
               />
             </div>

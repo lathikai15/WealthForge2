@@ -47,6 +47,16 @@ const Navbar = () => {
                 Signup
               </Link>
               <Link
+                to="/kyc"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  location.pathname === "/kyc" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                KYC
+              </Link>
+              <Link
                 to="/investor-dashboard"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   location.pathname === "/investor-dashboard" 

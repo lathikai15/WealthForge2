@@ -15,27 +15,13 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate login
-    const selectedRole = localStorage.getItem('selectedRole');
-    if (selectedRole === 'investor') {
-      navigate('/investor-dashboard');
-    } else if (selectedRole === 'trader') {
-      navigate('/trader-dashboard');
-    } else {
-      navigate('/investor-dashboard');
-    }
+    // Simulate login - redirect to KYC after login
+    navigate('/kyc');
   };
 
   const handleGoogleLogin = () => {
-    // Simulate Google OAuth login
-    const selectedRole = localStorage.getItem('selectedRole');
-    if (selectedRole === 'investor') {
-      navigate('/investor-dashboard');
-    } else if (selectedRole === 'trader') {
-      navigate('/trader-dashboard');
-    } else {
-      navigate('/investor-dashboard');
-    }
+    // Simulate Google OAuth login - redirect to KYC after login
+    navigate('/kyc');
   };
 
   return (
