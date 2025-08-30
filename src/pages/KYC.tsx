@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const KYC = () => {
   const navigate = useNavigate();
@@ -12,7 +13,9 @@ const KYC = () => {
     dateOfBirth: "",
     phoneNumber: "",
     otp: "",
-    emailVerified: false
+    emailVerified: false,
+    govtIdType: "",
+    govtIdNumber: ""
   });
   const [otpSent, setOtpSent] = useState(false);
 
@@ -71,6 +74,39 @@ const KYC = () => {
                 onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})}
                 required
               />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="govtIdType">Government ID Type</Label>
+                <Select
+                  value={formData.govtIdType}
+                  onValueChange={(value) => setFormData({...formData, govtIdType: value})}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select ID type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="aadhar">Aadhar Card</SelectItem>
+                    <SelectItem value="pan">PAN Card</SelectItem>
+                    <SelectItem value="passport">Passport</SelectItem>
+                    <SelectItem value="driving-license">Driving License</SelectItem>
+                    <SelectItem value="voter-id">Voter ID</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="govtIdNumber">ID Number</Label>
+                <Input
+                  id="govtIdNumber"
+                  type="text"
+                  placeholder="Enter ID number"
+                  value={formData.govtIdNumber}
+                  onChange={(e) => setFormData({...formData, govtIdNumber: e.target.value})}
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -133,7 +169,7 @@ const KYC = () => {
               type="submit" 
               className="w-full" 
               size="lg"
-              disabled={!otpSent || !formData.otp || !formData.emailVerified}
+              disabled={!otpSent || !formData.otp || !formData.emailVerified || !formData.govtIdType || !formData.govtIdNumber}
             >
               Complete Verification
             </Button>
