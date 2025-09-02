@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "../supabaseClient"; // 👈 import supabase client
 
 const InvestorBank = () => {
   const navigate = useNavigate();
@@ -11,13 +12,53 @@ const InvestorBank = () => {
     accountNumber: "",
     ifscCode: "",
     bankName: "",
-    accountHolderName: ""
+    accountHolderName: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate bank verification
-    navigate('/investor-dashboard');
+
+    try {
+      // 👇 get logged-in user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error(userError.message);
+        return setStatus("Error fetching user: " + userError.message);
+      }
+      if (!user) {
+        return setStatus("Not logged in");
+      }
+
+      // 👇 insert bank details
+      const { error } = await supabase.from("bank_details").insert([
+        {
+          user_id: user.id,
+          account_holder_name: formData.accountHolderName,
+          account_number: formData.accountNumber,
+          ifsc_code: formData.ifscCode,
+          bank_name: formData.bankName,
+        },
+      ]);
+
+      if (error) {
+        console.error("Insert error:", error.message);
+        return setStatus("Error saving bank details: " + error.message);
+      }
+
+      setStatus("✅ Bank details saved!");
+
+      // navigate after saving
+      navigate("/investor-dashboard");
+    } catch (err: any) {
+      console.error(err);
+      setStatus("Unexpected error: " + err.message);
+    }
   };
 
   return (
@@ -38,7 +79,7 @@ const InvestorBank = () => {
                 type="text"
                 placeholder="Enter account holder name"
                 value={formData.accountHolderName}
-                onChange={(e) => setFormData({...formData, accountHolderName: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, accountHolderName: e.target.value })}
                 required
               />
             </div>
@@ -50,11 +91,11 @@ const InvestorBank = () => {
                 type="text"
                 placeholder="Enter your account number"
                 value={formData.accountNumber}
-                onChange={(e) => setFormData({...formData, accountNumber: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="ifscCode">IFSC Code</Label>
               <Input
@@ -62,7 +103,7 @@ const InvestorBank = () => {
                 type="text"
                 placeholder="Enter IFSC code"
                 value={formData.ifscCode}
-                onChange={(e) => setFormData({...formData, ifscCode: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, ifscCode: e.target.value })}
                 required
               />
             </div>
@@ -74,7 +115,7 @@ const InvestorBank = () => {
                 type="text"
                 placeholder="Enter your bank name"
                 value={formData.bankName}
-                onChange={(e) => setFormData({...formData, bankName: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
                 required
               />
             </div>
@@ -82,9 +123,12 @@ const InvestorBank = () => {
             <div className="bg-muted p-4 rounded-lg">
               <h3 className="font-medium text-sm mb-2">Security Notice</h3>
               <p className="text-sm text-muted-foreground">
-                Your bank details are encrypted and stored securely. We use bank-level security to protect your information.
+                Your bank details are encrypted and stored securely. We use bank-level security to
+                protect your information.
               </p>
             </div>
+
+            {status && <p className="text-center text-sm">{status}</p>}
 
             <Button type="submit" className="w-full" size="lg">
               Verify Bank Account
